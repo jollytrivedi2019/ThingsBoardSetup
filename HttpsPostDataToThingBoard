@@ -1,0 +1,38 @@
+import requests
+import json
+import time
+
+# Thingsboard server details
+base_url = 'https://demo.thingsboard.io'  # As I am using the demo version, it can be replaced by hosted url
+access_token = '<device toke>' 
+
+# API endpoint for telemetry data
+telemetry_url = 'https://demo.thingsboard.io/api/v1/<device toke>/telemetry'
+
+# Data to be posted
+data = {
+    'temperature': 35
+}
+
+
+# Set headers
+headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+}
+
+while True:
+
+# Convert data to JSON string
+    payload = json.dumps(data)
+
+# Send POST request to Thingsboard
+    response = requests.post(telemetry_url, data=payload, headers=headers)
+
+    if response.status_code == 200:
+        print("Data posted successfully to Thingsboard")
+        print(payload)
+    else:
+        print(f"Failed to post data to Thingsboard. Status code: {response.status_code}")
+
+    time.sleep(60)
