@@ -4,10 +4,10 @@ import time
 
 # Thingsboard server details
 base_url = 'https://demo.thingsboard.io'  # As I am using the demo version, it can be replaced by hosted url
-access_token = '<device toke>' 
+access_token = '<device token>' 
 
 # API endpoint for telemetry data
-telemetry_url = 'https://demo.thingsboard.io/api/v1/<device toke>/telemetry'
+telemetry_url = 'https://demo.thingsboard.io/api/v1/<device token>/telemetry'
 
 # Data to be posted
 data = {
