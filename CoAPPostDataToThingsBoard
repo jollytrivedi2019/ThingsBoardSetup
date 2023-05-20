@@ -1,0 +1,54 @@
+Make sure to install aiocoap library using following command:
+
+pip install aiocoap
+
+Make sure that ThingBoard device is configure with CoAP in transport configuration tab.
+
+Following code will publish data to ThingsBoard every 1 minute
+
+import json
+import asyncio
+from aiocoap import *
+
+# Thingsboard server details
+host = 'demo.thingsboard.io'  # Replace with your Thingsboard domain
+port = 5683  # Default CoAP port for Thingsboard
+
+# Endpoint for telemetry data
+path = '/api/v1/FMD06UJL8udH66Wr2b4a/telemetry'  # Replace with your device access token
+
+# Data to be posted
+data = {
+    'temperature': 25.6,
+    'humidity': 50.2,
+    'pressure': 1013.25
+}
+
+async def post_to_thingsboard():
+    context = await Context.create_client_context()
+
+    # CoAP URI for Thingsboard
+    uri = f'coap://{host}:{port}{path}'
+
+    # CoAP request payload
+    payload = json.dumps(data).encode('utf-8')
+ 
+      
+    # Create CoAP request
+    #request = Message(code=POST, payload=payload, options=options)
+    request = Message(code=POST, payload=payload)
+    request.set_request_uri(uri)
+    
+    # Send CoAP request to Thingsboard
+    response = context.request(request)
+    response = await response.response
+    
+    if response.code.is_successful():
+        print("Data posted successfully to Thingsboard")
+    else:
+        print(f"Failed to post data to Thingsboard. Error code: {response.code}")
+
+while True:
+    asyncio.get_event_loop().run_until_complete(post_to_thingsboard())
+    # Delay for 1 minute
+    asyncio.get_event_loop().run_until_complete(asyncio.sleep(60))
