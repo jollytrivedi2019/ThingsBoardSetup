@@ -1,0 +1,90 @@
+Make sure that paho-mqtt is installed. Navigate to the folder where Python is installed. Execute following command can be used:
+py -3.11 -mpip install paho-mqtt
+
+Then run the following code in Python IDLE by updating correct broker url and device token.
+
+Following code can be used for 1 time post:
+
+import paho.mqtt.client as mqtt
+import json
+
+# Thingsboard MQTT broker details
+broker = 'demo.thingsboard.io'  
+port = 1883  # Default MQTT port for Thingsboard
+
+# Access token of the device in Thingsboard
+access_token = '<device toke>'  
+
+# MQTT topic format: v1/devices/me/telemetry
+topic = 'v1/devices/me/telemetry'
+
+# Create MQTT client instance
+client = mqtt.Client()
+
+# Connect callback
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected to Thingsboard MQTT broker")
+    else:
+        print("Connection to Thingsboard MQTT broker failed. Error code: " + str(rc))
+
+# Publish callback
+def on_publish(client, userdata, mid):
+    print("Data published to Thingsboard")
+    print(payload)
+
+# Set the callbacks
+client.on_connect = on_connect
+client.on_publish = on_publish
+
+# Connect to the Thingsboard MQTT broker
+client.username_pw_set(access_token)
+client.connect(broker, port, keepalive=60)
+
+# Data to be published
+data = {
+    'temperature': 25.6
+
+}
+
+# Convert data to JSON string
+payload = json.dumps(data)
+
+# Publish data to Thingsboard
+client.publish(topic, payload)
+
+# Disconnect from Thingsboard MQTT broker
+client.disconnect()
+
+
+Following code can be used for publishing data at interval of 1 minute.
+
+import paho.mqtt.client as paho  		    
+import os
+import json
+import time
+from datetime import datetime
+
+
+broker="demo.thingsboard.io"   			   
+ACCESS_TOKEN='<device token>'                 
+port=1883 					    
+
+def on_publish(client,userdata,result):             
+    print("data published to thingsboard \n")
+    pass
+client1= paho.Client("control1")                    
+client1.on_publish = on_publish                     
+client1.username_pw_set(ACCESS_TOKEN)               
+client1.connect(broker,port,keepalive=60)           
+
+while True:
+  
+   payload="{"
+    
+   payload+="\"Temperature\":25"; 
+   payload+="}"
+   ret= client1.publish("v1/devices/me/telemetry",payload) #topic-v1/devices/me/telemetry
+   print("Please check LATEST TELEMETRY field of your device")
+   print(payload);
+   time.sleep(60)
